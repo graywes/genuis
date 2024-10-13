@@ -1,4 +1,8 @@
 import time
+import winsound as s
+from mido import MidiFile
+
+mid = MidiFile('Tarrega_Adelita.mid')
 
 #for i in range(300):
 #    print("""\
@@ -33,6 +37,9 @@ def ask():
         enemy[1] -= player[2]
 
 art = open('bear.txt').read()
+s.Beep(800, 100)
+for msg in mid.play():
+    if msg
 draw()
 Hero()
 ask()
