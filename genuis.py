@@ -4,8 +4,11 @@ from mido import MidiFile
 from beep import beep
 import chippy
 import pyaudio
+from pathlib import Path
+import asyncio
+import threading
 
-mid = MidiFile('test (1).mid')
+mid = MidiFile('Pirates of the Caribbean - Hes a Pirate.mid')
 synth = chippy.Synthesizer(framerate=44100)
 square_pcm = synth.pulse_riff(length=3, frequency=183, duty_cycle=25)
 
@@ -26,6 +29,27 @@ redraw = open('blank.txt').read()
 bear_attack = enemy[2]
 hero_attack = player[2]
 block = enemy[2] - 5
+
+
+
+class Music(threading.Thread):
+
+    def __init__(self, function_that_downloads):
+        threading.Thread.__init__(self)
+        self.runnable = function_that_downloads
+
+    def run(self):
+        self.runnable()
+
+
+def music():
+    for msg in mid.play():
+        if msg.type == 'note_on':
+            #s.Beep(int((400 / 32) * (2 ** ((msg.note - 9) / 12))), 500)
+            s.PlaySound(("wavefile" + str(msg.note) + ".wav"), s.SND_ASYNC)
+        elif msg.type == 'note_off':
+            s.PlaySound(None, s.SND_ALIAS)
+
 
 def draw():
     global frame
@@ -68,17 +92,16 @@ s.Beep(800, 100)
 for i, track in enumerate(mid.tracks):
     print('Track {}: {}'.format(i, track.name))
     for msg in track:
-        print(msg)
-for msg in mid.play():
-    if msg.type == 'note_on':
-        #s.Beep(int((400 / 32) * (2 ** ((msg.note - 9) / 12))), 500)
-        square_pcm = synth.pulse_riff(length=0.5, frequency=int((400 / 32) * (2 ** ((msg.note - 9) / 12))), duty_cycle=25)
-        synth.save_wave(square_pcm, "wavefile.wav")
-        s.PlaySound("wavefile.wav", s.SND_ASYNC)
-    elif msg.type == 'note_off':
-        s.PlaySound(None, s.SND_ALIAS)
+        if msg.type == 'note_on':
+            if not Path(("wavefile" + str(msg.note) + ".wav")).is_file():
+                square_pcm = synth.pulse_riff(length=0.5, frequency=int((400 / 32) * (2 ** ((msg.note - 9) / 12))), duty_cycle=25)
+                synth.save_wave(square_pcm, ("wavefile" + str(msg.note) + ".wav"))
  
 draw()
 art = open('bear.txt').read()
+Hero()
+thread = Music(music)
+thread.start()
+ask()
 Hero()
 ask()
