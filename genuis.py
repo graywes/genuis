@@ -5,13 +5,18 @@ from beep import beep
 import chippy
 import pyaudio
 
-mid = MidiFile('Tarrega_Adelita.mid')
+mid = MidiFile('test (1).mid')
+synth = chippy.Synthesizer(framerate=44100)
+square_pcm = synth.pulse_riff(length=3, frequency=183, duty_cycle=25)
 
 #for i in range(300):
 #    print("""\
 #    imtesting wfhferfjiveoc
 #    eeee """)
 #    time.sleep(0.033)
+
+
+frame = 0
 
 
 player = ["Hero", 100, 10]
@@ -23,12 +28,31 @@ hero_attack = player[2]
 block = enemy[2] - 5
 
 def draw():
+    global frame
+    global art
+    print(redraw)
+    print(art)
+    #print("a wild " + enemy[0] + " attacks!")
+    #print("enemy hp: " + str(enemy[1]))
+    timeout = 2.3   # [seconds]
+    timeout_start = time.time()
+    s.PlaySound("bear_polar.wav", s.SND_ASYNC) 
+    while time.time() < timeout_start + timeout:
+        time.sleep(0.01)
+        frame += 1
+        if frame % 2 == 0:
+            art = open('bear1.txt').read()
+        else:
+            art = open('bear.txt').read()
+        print(redraw)
+        print(art)
+        
+
+def Hero():
     print(redraw)
     print(art)
     print("a wild " + enemy[0] + " attacks!")
     print("enemy hp: " + str(enemy[1]))
-
-def Hero():
     print("Hero: " + "HP " + str(player[1]) + " | " + "AP " + str(player[2]))
 
 def ask():
@@ -47,10 +71,14 @@ for i, track in enumerate(mid.tracks):
         print(msg)
 for msg in mid.play():
     if msg.type == 'note_on':
-        s.Beep(int((400 / 32) * (2 ** ((msg.note - 9) / 12))), 500)
+        #s.Beep(int((400 / 32) * (2 ** ((msg.note - 9) / 12))), 500)
+        square_pcm = synth.pulse_riff(length=0.5, frequency=int((400 / 32) * (2 ** ((msg.note - 9) / 12))), duty_cycle=25)
+        synth.save_wave(square_pcm, "wavefile.wav")
+        s.PlaySound("wavefile.wav", s.SND_ASYNC)
     elif msg.type == 'note_off':
-        s.Beep(37, 500)
-        
+        s.PlaySound(None, s.SND_ALIAS)
+ 
 draw()
+art = open('bear.txt').read()
 Hero()
 ask()
