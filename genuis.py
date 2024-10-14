@@ -1,6 +1,9 @@
 import time
 import winsound as s
 from mido import MidiFile
+from beep import beep
+import chippy
+import pyaudio
 
 mid = MidiFile('Tarrega_Adelita.mid')
 
@@ -38,8 +41,16 @@ def ask():
 
 art = open('bear.txt').read()
 s.Beep(800, 100)
+for i, track in enumerate(mid.tracks):
+    print('Track {}: {}'.format(i, track.name))
+    for msg in track:
+        print(msg)
 for msg in mid.play():
-    if msg
+    if msg.type == 'note_on':
+        s.Beep(int((400 / 32) * (2 ** ((msg.note - 9) / 12))), 500)
+    elif msg.type == 'note_off':
+        s.Beep(37, 500)
+        
 draw()
 Hero()
 ask()
