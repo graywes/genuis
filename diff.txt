@@ -1,0 +1,7 @@
+6
+100
+100
+#enemy att
+#enemy health
+#hero health
+pyinstaller genuis.py --add-data "req;data"

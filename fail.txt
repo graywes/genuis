@@ -1,1 +1,1 @@
-https://prod.liveshare.vsengsaas.visualstudio.com/join?15EE32B387B6F0EF9765D486618113503AB7
+pyinstaller genuis.py --add-data "req;data"
